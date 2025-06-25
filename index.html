@@ -1,0 +1,192 @@
+<!DOCTYPE html><html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Завдання для бьордвочерів</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #6dd5fa, #2980b9);
+      margin: 0;
+      padding: 40px 20px;
+      min-height: 100vh;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .container {
+      background: #ffffffdd;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      padding: 30px 40px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+      color: #333;
+    }
+    h1 {
+      margin: 0 0 30px 0;
+      font-weight: 600;
+      font-size: 2.4rem;
+      color: #2c3e50;
+      text-align: center;
+    }
+    .task {
+      background: #f9fafb;
+      margin-bottom: 18px;
+      padding: 15px 20px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    .task input[type="checkbox"] {
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border: 2.5px solid #2980b9;
+      border-radius: 6px;
+      margin-right: 18px;
+      cursor: pointer;
+      position: relative;
+    }
+    .task input[type="checkbox"]:checked {
+      background-color: #2980b9;
+      border-color: #2980b9;
+    }
+    .task input[type="checkbox"]:checked::after {
+      content: "\2713";
+      color: white;
+      position: absolute;
+      top: 1px;
+      left: 5px;
+      font-size: 18px;
+    }
+    .task label {
+      flex-grow: 1;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    #score {
+      margin-top: 35px;
+      font-size: 1.7rem;
+      font-weight: 700;
+      text-align: center;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Завдання для бьордвочерів</h1>
+    <div id="tasks-container"></div>
+    <div id="score">Загальні бали: 0</div>
+  </div>
+  <script>
+    const allTasks = [
+      "Почути Крижня", "Сфоткати Велику синицю", "Почути голос Зяблика", "Побачити Горобця хатнього",
+      "Сфоткати Ворону сіру", "Почути голос Солов'я східного", "Побачити Сороку звичайну",
+      "Сфоткати Лиску", "Почути голос Дрозда чорного", "Побачити Чайку", "Сфоткати Ластівку сільську",
+      "Почути голос Зозулі звичайної", "Побачити Серпокрильця чорного", "Сфоткати Білу плиску",
+      "Почути голос Шпака звичайного", "Побачити Дятла звичайного", "Сфоткати Омелюха", "Почути голос Щиглика",
+      "Побачити Снігура", "Сфоткати Вільшанку", "Почути голос Жайворонка польового", "Побачити Горлицю садову",
+      "Сфоткати Кропив'янку чорноголову", "Почути голос Перепілки", "Побачити Канюка звичайного",
+      "Сфоткати Боривітра звичайного", "Почути голос Деркача", "Побачити Лебедя-шипуна",
+      "Сфоткати Чаплю сіру", "Почути голос Бугая", "Побачити Кулика-сороку", "Сфоткати Одуда",
+      "Почути голос Бджолоїдки звичайної", "Побачити Рибалочку звичайного", "Сфоткати Сиворакшу",
+      "Почути голос Дятла сивого", "Побачити Плиску жовту", "Сфоткати Трав'янку лучну",
+      "Почути голос Вівчарика-ковалика", "Побачити Очеретянку ставкову", "Сфоткати Чечевицю звичайну",
+      "Почути голос Чижа", "Побачити Крука", "Сфоткати Пугача", "Почути голос Сичика-горобця",
+      "Побачити Сипуху", "Сфоткати Качку шилохвіст", "Почути голос Пірникози великої", "Побачити Гоголя",
+      "Сфоткати Креха великого", "Почути голос Совки", "Побачити Кулика-довгонога",
+      "Сфоткати Пісочника малого", "Почути голос Щедрика", "Побачити Вівсянку звичайну",
+      "Сфоткати Вивільгу", "Почути голос В'юрка", "Побачити Коноплянку", "Сфоткати Вівсянку звичайну",
+      "Почути голос Вівсянки очеретяної", "Побачити Дятла звичайного", "Сфоткати Просянку",
+      "Почути голос Одуда", "Побачити Шуліку чорного", "Сфоткати Підсоколика великого",
+      "Почути голос Кібчика", "Побачити Дрозда-чикотня", "Сфоткати Лелеку білу",
+      "Почути голос Солов'їної очеретянки", "Побачити Мартина звичайного", "Сфоткати Баклана великого",
+      "Почути голос Чаплі сірої", "Побачити Бугая малого", "Сфоткати Орлана-білохвоста",
+      "Почути голос Змієїда", "Побачити Сапсана", "Сфоткати Сича хатнього",
+      "Почути голос Синиці блакитної", "Побачити Зеленяка", "Сфоткати Сойку",
+      "Почути голос Щеврика лісового", "Побачити Щеврика польового", "Сфоткати Дрозда-омелюха",
+      "Почути голос Співочого дрозда", "Побачити Жовну зелену", "Сфоткати Крутиголовку",
+      "Почути голос Боривітра степового", "Побачити Чепуру велику", "Сфоткати Ластівку міську",
+      "Почути голос Чечевиці звичайної", "Побачити Вівчарика зеленого", "Сфоткати Коноплянку",
+      "Почути голос Вивільги", "Побачити Дятла малого", "Сфоткати Вільшанку",
+      "Почути голос Горлиці садової", "Побачити Зяблика", "Сфоткати Ворону сіру",
+      "Почути голос Куріпки сірої", "Побачити Крижня"
+    ];let remainingTasks = [...allTasks];
+let completedTasks = JSON.parse(localStorage.getItem('completedTasks')) || [];
+let score = parseInt(localStorage.getItem('score') || '0');
+
+const tasksContainer = document.getElementById('tasks-container');
+const scoreDisplay = document.getElementById('score');
+
+function updateScoreDisplay() {
+  scoreDisplay.textContent = `Загальні бали: ${score}`;
+}
+
+function addRandomTask() {
+  if (remainingTasks.length === 0) return;
+  const idx = Math.floor(Math.random() * remainingTasks.length);
+  const taskText = remainingTasks.splice(idx, 1)[0];
+
+  const div = document.createElement('div');
+  div.className = 'task';
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = taskText;
+  checkbox.checked = completedTasks.includes(taskText);
+
+  checkbox.addEventListener('change', () => {
+    if (checkbox.checked) {
+      completedTasks.push(taskText);
+      score += 10;
+      localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
+      localStorage.setItem('score', score);
+      updateScoreDisplay();
+      addRandomTask();
+    }
+  });
+
+  const label = document.createElement('label');
+  label.htmlFor = taskText;
+  label.textContent = taskText;
+
+  div.appendChild(checkbox);
+  div.appendChild(label);
+  tasksContainer.appendChild(div);
+}
+
+updateScoreDisplay();
+
+// Спочатку показуємо 1 завдання, або відновлені
+if (completedTasks.length === 0) {
+  addRandomTask();
+} else {
+  completedTasks.forEach(task => {
+    const div = document.createElement('div');
+    div.className = 'task';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = task;
+    checkbox.checked = true;
+    checkbox.disabled = true;
+
+    const label = document.createElement('label');
+    label.htmlFor = task;
+    label.textContent = task;
+
+    div.appendChild(checkbox);
+    div.appendChild(label);
+    tasksContainer.appendChild(div);
+  });
+  addRandomTask();
+}
+
+  </script>
+</body>
+</html>
